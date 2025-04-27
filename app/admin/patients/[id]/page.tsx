@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 
 interface Appointment {
@@ -21,7 +21,7 @@ interface Patient {
 }
 
 export default function PatientDetailPage() {
-  const router = useRouter();
+
   const { id } = useParams();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(true);
