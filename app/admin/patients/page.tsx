@@ -1,23 +1,43 @@
-"use client";
-
 // app/admin/patients/page.tsx
 
-import prisma from "@/lib/prisma";
-import Link from "next/link";
+"use client";
 
-export default async function PatientsPage() {
-  const patients = await prisma.patient.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+interface Patient {
+  id: string;
+  firstName: string;
+  lastName: string;
+  illness: string;
+  nfcId: string;
+  photoUrl: string | null;
+  nextAppointment: string | null;
+}
+
+export default function PatientsPage() {
+  const [patients, setPatients] = useState<Patient[]>([]);
+
+  useEffect(() => {
+    async function fetchPatients() {
+      const res = await fetch("/api/nfc");
+      const data = await res.json();
+      setPatients(data);
+    }
+
+    fetchPatients();
+  }, []);
 
   return (
     <div className="p-8">
-      <button
-        className="flex items-center mb-6 cursor-pointer hover:text-blue-500"
-        onClick={() => window.history.back()}
-      >
-        👈
-      </button>
+      <Link
+          className="flex items-center mb-6 cursor-pointer hover:text-blue-500 w-10 h-10"
+          href={"/"}
+          prefetch={false}
+        >
+          👈
+          <span className="ml-2">Back</span>
+        </Link>
       <h1 className="text-3xl font-bold mb-6">Patients List</h1>
 
       <div className="overflow-x-auto">
@@ -49,9 +69,7 @@ export default async function PatientsPage() {
                 <td className="p-3 border border-gray-300">
                   {patient.firstName} {patient.lastName}
                 </td>
-                <td className="p-3 border border-gray-300">
-                  {patient.illness}
-                </td>
+                <td className="p-3 border border-gray-300">{patient.illness}</td>
                 <td className="p-3 border border-gray-300">{patient.nfcId}</td>
                 <td className="p-3 border border-gray-300">
                   {patient.nextAppointment ? (
@@ -71,7 +89,6 @@ export default async function PatientsPage() {
                     "—"
                   )}
                 </td>
-
                 <td className="p-3 border border-gray-300">
                   <Link
                     href={`/admin/patients/${patient.id}`}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Appointment {
   id: string;
@@ -61,9 +62,9 @@ export default function PatientDetailPage() {
 
   return (
     <div className="p-8 max-w-2xl mx-auto">
-      <button className="flex items-center mb-6 cursor-pointer hover:text-blue-500" onClick={() => router.push("/admin/patients")}>
-      👈
-      </button>
+      <Link className="flex items-center mb-6 cursor-pointer hover:text-blue-500" href={"/"} prefetch={false}>
+      Back
+      </Link>
       <h1 className="text-2xl font-bold mb-6">Edit Patient Info</h1>
 
       <div className="flex flex-col gap-4">

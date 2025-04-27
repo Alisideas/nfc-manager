@@ -66,8 +66,9 @@ export default async function Home() {
           <Link
             href="/admin/patients"
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            prefetch={false}
           >
-            List of patients
+            📋 View All Patients
           </Link>
         </div>
       </div>
