@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function NFCScanPage() {
   const router = useRouter();
@@ -24,6 +25,14 @@ export default function NFCScanPage() {
 
   return (
     <div className="p-8 max-w-md mx-auto">
+      <Link
+          className="flex items-center mb-6 cursor-pointer hover:text-blue-500 w-10 h-10"
+          href={"/"}
+          prefetch={false}
+        >
+          👈
+          <span className="ml-2">Back</span>
+        </Link>
       <h1 className="text-2xl font-bold mb-6 text-center">🔍 Scan NFC Tag</h1>
 
       <div className="flex flex-col gap-4">

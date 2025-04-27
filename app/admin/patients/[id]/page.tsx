@@ -63,7 +63,8 @@ export default function PatientDetailPage() {
   return (
     <div className="p-8 max-w-2xl mx-auto">
       <Link className="flex items-center mb-6 cursor-pointer hover:text-blue-500" href={"/"} prefetch={false}>
-      Back
+      👈
+        <span className="ml-2">Back</span>
       </Link>
       <h1 className="text-2xl font-bold mb-6">Edit Patient Info</h1>
 

@@ -28,24 +28,28 @@ export default async function Home() {
 
       {/* Upcoming Appointments */}
       <div className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4">
-          📅 Upcoming Appointments
-        </h2>
         <div className="border rounded p-4 bg-gray-50">
+          <h2 className="text-xl font-semibold mb-4">
+            📅 Upcoming Appointments
+          </h2>
+          <hr className="my-2" />
           {upcomingAppointments.length === 0 ? (
             <p className="text-gray-500">No upcoming appointments.</p>
           ) : (
             <ul className="space-y-2">
               {upcomingAppointments.map((appointment) => (
-                <li key={appointment.id} className="flex justify-between">
-                  <div>
-                    {appointment.patient?.firstName}{" "}
-                    {appointment.patient?.lastName}
-                  </div>
-                  <div className="text-gray-600">
-                    {format(new Date(appointment.date), "PPP p")}
-                  </div>
-                </li>
+                <div>
+                  <li key={appointment.id} className="flex justify-between">
+                    <div>
+                      {appointment.patient?.firstName}{" "}
+                      {appointment.patient?.lastName}
+                    </div>
+                    <div className="text-gray-600">
+                      {format(new Date(appointment.date), "PPP p")}
+                    </div>
+                  </li>
+                  <hr className="my-2" />
+                </div>
               ))}
             </ul>
           )}
@@ -62,14 +66,25 @@ export default async function Home() {
             ➕ Add New Patient
           </Link>
         </div>
-        <div className="mb-6">
-          <Link
-            href="/admin/patients"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            prefetch={false}
-          >
-            📋 View All Patients
-          </Link>
+        <div className="flex flex-row gap-4">
+          <div className="mb-6">
+            <Link
+              href="/admin/patients"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              prefetch={false}
+            >
+              📋 View All Patients
+            </Link>
+          </div>
+          <div className="mb-6">
+            <Link
+              href="/nfc-scan"
+              className="bg-blue-700 text-white px-2 py-2 rounded hover:bg-blue-600"
+              prefetch={false}
+            >
+              🔍 NFC
+            </Link>
+          </div>
         </div>
       </div>
 
