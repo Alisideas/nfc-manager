@@ -8,24 +8,36 @@ datasource db {
 }
 
 model Patient {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  firstName         String
-  lastName          String
-  photoUrl          String?
-  illness           String
-  nfcId             String  @unique
-  currentAppointment DateTime?
-  nextAppointment    DateTime?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  history           Appointment[]
+  id                        String        @id @default(auto()) @map("_id") @db.ObjectId
+  firstName                 String
+  lastName                  String
+  photoUrl                  String?
+  idNumber                  String
+  trackingId                String
+  gender                    String
+  age                       Int
+  medicalHistory            String
+  specificDesase            String
+  insuranceType             String
+  referredDoctor            String
+  bodyPartAffected          String
+  NumberOfBodyPartsAffected Int
+  visitingType              String
+  illness                   String
+  nfcId                     String        @unique
+  currentAppointment        DateTime?
+  nextAppointment           DateTime?
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
+  history                   Appointment[]
 }
 
 model Appointment {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   patientId   String   @db.ObjectId
-  patient     Patient  @relation(fields: [patientId], references: [id])
   date        DateTime
   description String
-  status      String    // "upcoming", "completed"
+  status      String // "upcoming", "completed"
+
+  patient Patient @relation(fields: [patientId], references: [id])
 }

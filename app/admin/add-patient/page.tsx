@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Use next/navigation instead of next/router
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function AddPatientForm() {
   const [formData, setFormData] = useState({
@@ -42,10 +43,11 @@ export default function AddPatientForm() {
     });
 
     if (response.ok) {
+      toast.success("Patient created successfully!");
       router.push("/admin/patients");
     } else {
       const errorText = await response.text();
-      alert("Failed to create patient: " + errorText);
+      toast.error("Failed to create patient: " + errorText);
     }
   };
 
