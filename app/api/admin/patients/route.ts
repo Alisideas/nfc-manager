@@ -4,20 +4,60 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const { firstName, lastName, photoUrl, illness, nfcId, nextAppointment } = body;
+    const {
+      firstName,
+      lastName,
+      photoUrl,
+      idNumber,
+      trackingId,
+      gender,
+      age,
+      medicalHistory,
+      specificDesase,
+      insuranceType,
+      referredDoctor,
+      bodyPartAffected,
+      NumberOfBodyPartsAffected,
+      visitingType,
+      address,
+      phoneNumber,
+      email,
+      relatedImages,
+      illness,
+      nfcId,
+      currentAppointment,
+      nextAppointment,
+    } = body;
 
-    // 1. Create the patient
+    // Create patient
     const patient = await prisma.patient.create({
       data: {
         firstName,
         lastName,
         photoUrl,
+        idNumber,
+        trackingId,
+        gender,
+        age,
+        medicalHistory,
+        specificDesase,
+        insuranceType,
+        referredDoctor,
+        bodyPartAffected,
+        NumberOfBodyPartsAffected,
+        visitingType,
+        address,
+        phoneNumber,
+        email,
+        relatedImages,
         illness,
         nfcId,
+        currentAppointment: currentAppointment ? new Date(currentAppointment) : undefined,
+        nextAppointment: nextAppointment ? new Date(nextAppointment) : undefined,
       },
     });
 
-    // 2. (Optional) Create the next appointment if nextAppointment exists
+    // Optionally create initial appointment from nextAppointment
     if (nextAppointment) {
       await prisma.appointment.create({
         data: {

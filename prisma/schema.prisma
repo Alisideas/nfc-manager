@@ -23,6 +23,10 @@ model Patient {
   bodyPartAffected          String
   NumberOfBodyPartsAffected Int
   visitingType              String
+  address                   String
+  phoneNumber               String
+  email                     String?
+  relatedImages             String[]
   illness                   String
   nfcId                     String        @unique
   currentAppointment        DateTime?
