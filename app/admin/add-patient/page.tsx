@@ -39,6 +39,47 @@ export default function AddPatientForm() {
     setIsClient(true);
   }, []);
 
+  const handleReadNfcTag = async () => {
+    if (!("NDEFReader" in window)) {
+      toast.error("Web NFC is not supported in this browser.");
+      return;
+    }
+  
+    try {
+      const ndef = new (window as any).NDEFReader();
+      await ndef.scan();
+  
+      toast("Hold NFC tag near the reader...");
+  
+      ndef.onreading = (event: any) => {
+        const tagId = event.serialNumber;
+  
+        if (!tagId) {
+          toast.error("Could not read tag ID.");
+          return;
+        }
+  
+        setFormData((prev) => ({ ...prev, nfcId: tagId }));
+        toast.success(`Tag read: ${tagId}`);
+  
+        // Optional: check if this NFC ID is already registered
+        fetch(`/api/admin/patients/nfc/${tagId}`)
+          .then(async (res) => {
+            if (res.ok) {
+              const patient = await res.json();
+              toast(`Already registered to: ${patient.firstName} ${patient.lastName}`);
+            }
+          })
+          .catch(() => {
+            toast("Tag is not yet registered.");
+          });
+      };
+    } catch (error: any) {
+      toast.error("NFC read failed: " + error.message);
+    }
+  };
+  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -75,30 +116,228 @@ export default function AddPatientForm() {
         <h2 className="text-2xl font-semibold mb-4">Add New Patient</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <input type="text" placeholder="First Name" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Last Name" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="ID Number" value={formData.idNumber} onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Tracking ID" value={formData.trackingId} onChange={(e) => setFormData({ ...formData, trackingId: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Gender" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })} className="p-2 border rounded" />
-            <input type="number" placeholder="Age" value={formData.age} onChange={(e) => setFormData({ ...formData, age: +e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Medical History" value={formData.medicalHistory} onChange={(e) => setFormData({ ...formData, medicalHistory: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Specific Disease" value={formData.specificDesase} onChange={(e) => setFormData({ ...formData, specificDesase: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Insurance Type" value={formData.insuranceType} onChange={(e) => setFormData({ ...formData, insuranceType: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Referred Doctor" value={formData.referredDoctor} onChange={(e) => setFormData({ ...formData, referredDoctor: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Body Part Affected" value={formData.bodyPartAffected} onChange={(e) => setFormData({ ...formData, bodyPartAffected: e.target.value })} className="p-2 border rounded" />
-            <input type="number" placeholder="Number of Body Parts Affected" value={formData.NumberOfBodyPartsAffected} onChange={(e) => setFormData({ ...formData, NumberOfBodyPartsAffected: +e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Visiting Type" value={formData.visitingType} onChange={(e) => setFormData({ ...formData, visitingType: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Phone Number" value={formData.phoneNumber} onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })} className="p-2 border rounded" />
-            <input type="email" placeholder="Email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Illness" value={formData.illness} onChange={(e) => setFormData({ ...formData, illness: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="NFC ID" value={formData.nfcId} onChange={(e) => setFormData({ ...formData, nfcId: e.target.value })} className="p-2 border rounded" />
-            <input type="text" placeholder="Photo URL" value={formData.photoUrl} onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })} className="p-2 border rounded" />
+            <input
+              type="text"
+              placeholder="First Name"
+              value={formData.firstName}
+              onChange={(e) =>
+                setFormData({ ...formData, firstName: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={formData.lastName}
+              onChange={(e) =>
+                setFormData({ ...formData, lastName: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="ID Number"
+              value={formData.idNumber}
+              onChange={(e) =>
+                setFormData({ ...formData, idNumber: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Tracking ID"
+              value={formData.trackingId}
+              onChange={(e) =>
+                setFormData({ ...formData, trackingId: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <select
+              value={formData.gender}
+              onChange={(e) =>
+                setFormData({ ...formData, gender: e.target.value })
+              }
+              className="p-2 border rounded"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            <input
+              type="number"
+              placeholder="Age"
+              value={formData.age}
+              onChange={(e) =>
+                setFormData({ ...formData, age: +e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <select
+              value={formData.medicalHistory}
+              onChange={(e) =>
+                setFormData({ ...formData, medicalHistory: e.target.value })
+              }
+              className="p-2 border rounded"
+            >
+              <option value="">Select Medical History</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Specific Disease"
+              value={formData.specificDesase}
+              onChange={(e) =>
+                setFormData({ ...formData, specificDesase: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <select
+              value={formData.insuranceType}
+              onChange={(e) =>
+                setFormData({ ...formData, insuranceType: e.target.value })
+              }
+              className="p-2 border rounded"
+            >
+              <option value="">Select Insurance Type</option>
+              <option value="private">Khadamat darmani</option>
+              <option value="public">Niroohaye mosallah</option>
+              <option value="none">None</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Referred Doctor"
+              value={formData.referredDoctor}
+              onChange={(e) =>
+                setFormData({ ...formData, referredDoctor: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Body Part Affected"
+              value={formData.bodyPartAffected}
+              onChange={(e) =>
+                setFormData({ ...formData, bodyPartAffected: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="number"
+              placeholder="Number of Body Parts Affected"
+              value={formData.NumberOfBodyPartsAffected}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  NumberOfBodyPartsAffected: +e.target.value,
+                })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Visiting Type"
+              value={formData.visitingType}
+              onChange={(e) =>
+                setFormData({ ...formData, visitingType: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Address"
+              value={formData.address}
+              onChange={(e) =>
+                setFormData({ ...formData, address: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Phone Number"
+              value={formData.phoneNumber}
+              onChange={(e) =>
+                setFormData({ ...formData, phoneNumber: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Illness"
+              value={formData.illness}
+              onChange={(e) =>
+                setFormData({ ...formData, illness: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <div className="flex gap-2 items-center">
+              <input
+                type="text"
+                placeholder="NFC ID"
+                value={formData.nfcId}
+                onChange={(e) =>
+                  setFormData({ ...formData, nfcId: e.target.value })
+                }
+                className="p-2 border rounded flex-1"
+              />
+              <button
+                type="button"
+                onClick={handleReadNfcTag}
+                className="bg-blue-500 text-white px-3 rounded hover:bg-blue-600"
+              >
+                Read NFC
+              </button>
+            </div>
+
+            <input
+              type="text"
+              placeholder="Photo URL"
+              value={formData.photoUrl}
+              onChange={(e) =>
+                setFormData({ ...formData, photoUrl: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4 mt-4">
-            <input type="datetime-local" placeholder="Current Appointment" value={formData.currentAppointment} onChange={(e) => setFormData({ ...formData, currentAppointment: e.target.value })} className="p-2 border rounded" />
-            <input type="datetime-local" placeholder="Next Appointment" value={formData.nextAppointment} onChange={(e) => setFormData({ ...formData, nextAppointment: e.target.value })} className="p-2 border rounded" />
+            <div>
+              <p>Current Appointment</p>
+              <input
+                type="datetime-local"
+                placeholder="Current Appointment"
+                value={formData.currentAppointment}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    currentAppointment: e.target.value,
+                  })
+                }
+                className="p-2 border rounded"
+              />
+            </div>
+            <div>
+              <p>Next Appointment</p>
+              <input
+                type="datetime-local"
+                placeholder="Next Appointment"
+                value={formData.nextAppointment}
+                onChange={(e) =>
+                  setFormData({ ...formData, nextAppointment: e.target.value })
+                }
+                className="p-2 border rounded"
+              />
+            </div>
           </div>
 
           <div className="mt-4">
@@ -119,7 +358,9 @@ export default function AddPatientForm() {
                   type="button"
                   className="text-red-500"
                   onClick={() => {
-                    const updated = formData.relatedImages.filter((_, i) => i !== index);
+                    const updated = formData.relatedImages.filter(
+                      (_, i) => i !== index
+                    );
                     setFormData({ ...formData, relatedImages: updated });
                   }}
                 >
@@ -131,7 +372,10 @@ export default function AddPatientForm() {
               type="button"
               className="text-blue-500 mt-1"
               onClick={() =>
-                setFormData({ ...formData, relatedImages: [...formData.relatedImages, ""] })
+                setFormData({
+                  ...formData,
+                  relatedImages: [...formData.relatedImages, ""],
+                })
               }
             >
               + Add Image URL
