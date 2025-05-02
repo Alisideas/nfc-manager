@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface Patient {
   id: string;
@@ -57,7 +58,7 @@ export default function PatientsPage() {
               <tr key={patient.id} className="text-center">
                 <td className="p-3 border border-gray-300">
                   {patient.photoUrl ? (
-                    <img
+                    <Image
                       src={patient.photoUrl}
                       alt="Patient Photo"
                       className="w-12 h-12 rounded-full object-cover mx-auto"

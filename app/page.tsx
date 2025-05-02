@@ -2,6 +2,7 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { format } from "date-fns";
+import Image from "next/image";
 
 export default async function Home() {
   const patients = await prisma.patient.findMany();
@@ -91,12 +92,13 @@ export default async function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {patients.map((patient) => (
           <Link
+
             href={`/admin/patients/${patient.id}`}
             key={patient.id}
             className="border p-4 rounded shadow hover:bg-gray-100 transition"
           >
-            <div className="flex items-center gap-4">
-              <img
+            <div className="flex items-center gap-4" key={patient.id}>
+              <Image
                 src={patient.photoUrl || "/default-avatar.png"}
                 alt={`${patient.firstName} ${patient.lastName}`}
                 className="w-16 h-16 rounded-full object-cover"

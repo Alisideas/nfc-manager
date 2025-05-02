@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { BsThreeDots, BsPencil } from "react-icons/bs";
+import Image from "next/image";
 
 interface Appointment {
   id: string;
@@ -163,7 +164,7 @@ export default function PatientDetailPage() {
       <div className="mb-6 flex justify-center items-center">
         <div className="w-32 h-32 rounded-full overflow-hidden">
           {form.photoUrl ? (
-            <img src={form.photoUrl} alt={form.firstName} className="object-cover w-full h-full" />
+            <Image src={form.photoUrl} alt={form.firstName} className="object-cover w-full h-full" />
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
               <span className="text-gray-500">No Photo</span>
@@ -202,7 +203,7 @@ export default function PatientDetailPage() {
         <h2 className="text-xl font-semibold mb-2">Related Images</h2>
         <div className="flex flex-wrap gap-4">
           {form.relatedImages.map((url, index) => (
-            <img
+            <Image
               key={index}
               src={url}
               alt={`Related ${index}`}
@@ -216,7 +217,7 @@ export default function PatientDetailPage() {
       {/* Carousel */}
       {showCarousel && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50">
-          <img src={form.relatedImages[carouselIndex]} alt={`Slide ${carouselIndex}`} className="max-w-[90vw] max-h-[80vh] rounded shadow" />
+          <Image src={form.relatedImages[carouselIndex]} alt={`Slide ${carouselIndex}`} className="max-w-[90vw] max-h-[80vh] rounded shadow" />
           <div className="mt-4 flex gap-4">
             <button onClick={() => setCarouselIndex((carouselIndex - 1 + form.relatedImages.length) % form.relatedImages.length)} className="text-white text-lg">⬅️ Prev</button>
             <button onClick={() => setShowCarousel(false)} className="text-white text-lg">Close ✖️</button>
