@@ -21,7 +21,7 @@ declare global {
     NDEFReader?: {
       new (): {
         scan: () => Promise<void>;
-        onreading: (event: any) => void;
+        onreading: (event: NDEFReadingEvent) => void;
       };
     };
   }
@@ -70,7 +70,7 @@ export default function AddPatientForm() {
     }
   
     try {
-      const ndef = new (window as unknown as { NDEFReader: new () => { scan: () => Promise<void>; onreading: (event: any) => void } }).NDEFReader();
+      const ndef = new (window as unknown as { NDEFReader: new () => { scan: () => Promise<void>; onreading: (event: NDEFReadingEvent) => void } }).NDEFReader();
 
       await ndef.scan();
   
@@ -99,7 +99,7 @@ export default function AddPatientForm() {
             toast("Tag is not yet registered.");
           });
       };
-    } catch (error: any) {
+    } catch (error: string | any) {
       toast.error("NFC read failed: " + error.message);
     }
   };
