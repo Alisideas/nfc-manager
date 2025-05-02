@@ -59,6 +59,8 @@ export default function PatientsPage() {
                 <td className="p-3 border border-gray-300">
                   {patient.photoUrl ? (
                     <Image
+                      width={48}
+                      height={48}
                       src={patient.photoUrl}
                       alt="Patient Photo"
                       className="w-12 h-12 rounded-full object-cover mx-auto"

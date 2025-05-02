@@ -39,8 +39,8 @@ export default async function Home() {
           ) : (
             <ul className="space-y-2">
               {upcomingAppointments.map((appointment) => (
-                <div>
-                  <li key={appointment.id} className="flex justify-between">
+                <div key={appointment.id}>
+                  <li className="flex justify-between">
                     <div>
                       {appointment.patient?.firstName}{" "}
                       {appointment.patient?.lastName}
@@ -92,13 +92,14 @@ export default async function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {patients.map((patient) => (
           <Link
-
             href={`/admin/patients/${patient.id}`}
             key={patient.id}
             className="border p-4 rounded shadow hover:bg-gray-100 transition"
           >
             <div className="flex items-center gap-4" key={patient.id}>
               <Image
+                width={64}
+                height={64}
                 src={patient.photoUrl || "/default-avatar.png"}
                 alt={`${patient.firstName} ${patient.lastName}`}
                 className="w-16 h-16 rounded-full object-cover"

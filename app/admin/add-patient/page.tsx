@@ -7,13 +7,13 @@ interface NDEFReadingEvent extends Event {
   serialNumber: string;
   message: { records: NDEFRecord[] };
 }
-  // Define the NDEFRecord interface
-  interface NDEFRecord {
-    recordType: string;
-    mediaType: string;
-    id: string;
-    data: string;
-  }
+// Define the NDEFRecord interface
+interface NDEFRecord {
+  recordType: string;
+  mediaType: string;
+  id: string;
+  data: string;
+}
 
 // Declare global type for NDEFReader
 declare global {
@@ -68,42 +68,54 @@ export default function AddPatientForm() {
       toast.error("Web NFC is not supported in this browser.");
       return;
     }
-  
+
     try {
-      const ndef = new (window as unknown as { NDEFReader: new () => { scan: () => Promise<void>; onreading: (event: NDEFReadingEvent) => void } }).NDEFReader();
+      const ndef = new (
+        window as unknown as {
+          NDEFReader: new () => {
+            scan: () => Promise<void>;
+            onreading: (event: NDEFReadingEvent) => void;
+          };
+        }
+      ).NDEFReader();
 
       await ndef.scan();
-  
+
       toast("Hold NFC tag near the reader...");
-  
+
       ndef.onreading = (event: NDEFReadingEvent) => {
         const tagId = event.serialNumber;
-  
+
         if (!tagId) {
           toast.error("Could not read tag ID.");
           return;
         }
-  
+
         setFormData((prev) => ({ ...prev, nfcId: tagId }));
         toast.success(`Tag read: ${tagId}`);
-  
+
         // Optional: check if this NFC ID is already registered
         fetch(`/api/admin/patients/nfc/${tagId}`)
           .then(async (res) => {
             if (res.ok) {
               const patient = await res.json();
-              toast(`Already registered to: ${patient.firstName} ${patient.lastName}`);
+              toast(
+                `Already registered to: ${patient.firstName} ${patient.lastName}`
+              );
             }
           })
           .catch(() => {
             toast("Tag is not yet registered.");
           });
       };
-    } catch (error: any) {
-      toast.error("NFC read failed: " + error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error("NFC read failed: " + error.message);
+      } else {
+        toast.error("NFC read failed");
+      }
     }
   };
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
