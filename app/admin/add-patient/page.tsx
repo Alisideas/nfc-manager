@@ -99,8 +99,8 @@ export default function AddPatientForm() {
             toast("Tag is not yet registered.");
           });
       };
-    } catch (error: unknown) {
-      toast.error("NFC read failed: " + (error as Error).message);
+    } catch (error: any) {
+      toast.error("NFC read failed: " + error.message);
     }
   };
   
