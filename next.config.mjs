@@ -15,7 +15,8 @@ const nextConfig = {
       "www.themoviedb.org",
       "upload.wikimedia.org",
       'images.remotePatterns',
-      'm.media-amazon.com'
+      'm.media-amazon.com',
+      'www.shareicon.net',
     ],
   },
 };
