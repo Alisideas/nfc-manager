@@ -2,6 +2,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+interface NDEFReadingEvent extends Event {
+  serialNumber: string;
+  message: { records: NDEFRecord[] };
+}
+  // Define the NDEFRecord interface
+  interface NDEFRecord {
+    recordType: string;
+    mediaType: string;
+    id: string;
+    data: string;
+  }
+
+// Declare global type for NDEFReader
+declare global {
+  interface Window {
+    NDEFReader?: {
+      new (): {
+        scan: () => Promise<void>;
+        onreading: (event: any) => void;
+      };
+    };
+  }
+}
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -46,12 +70,13 @@ export default function AddPatientForm() {
     }
   
     try {
-      const ndef = new (window as any).NDEFReader();
+      const ndef = new (window as unknown as { NDEFReader: new () => { scan: () => Promise<void>; onreading: (event: any) => void } }).NDEFReader();
+
       await ndef.scan();
   
       toast("Hold NFC tag near the reader...");
   
-      ndef.onreading = (event: any) => {
+      ndef.onreading = (event: NDEFReadingEvent) => {
         const tagId = event.serialNumber;
   
         if (!tagId) {

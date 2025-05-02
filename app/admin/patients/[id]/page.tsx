@@ -122,7 +122,7 @@ export default function PatientDetailPage() {
       <label className="w-40 font-medium text-gray-700">{label}:</label>
       <input
         type={type}
-        value={form[key] as any}
+        value={form[key] as string | number}
         disabled={editingField !== key}
         onChange={(e) => setForm({ ...form, [key]: type === 'number' ? +e.target.value : e.target.value })}
         className={`border p-2 rounded w-full ${editingField === key ? "bg-white" : "bg-gray-100"}`}
