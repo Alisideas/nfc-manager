@@ -1,8 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-import { IncomingForm } from "formidable";
-import fs from "fs";
-import { promisify } from "util";
 
 // Enable reading multipart form
 export const routeSegmentConfig = {
@@ -18,13 +15,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
-// Helper to parse multipart form
-const parseForm = async (req: NextRequest): Promise<{ file: any }> => {
-  const form = new IncomingForm({ keepExtensions: true });
-  const parse = promisify(form.parse);
-  // @ts-ignore
-  return parse(req);
-};
 
 export async function POST(req: Request) {
   const formData = await req.formData();

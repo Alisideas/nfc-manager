@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface NDEFReadingEvent extends Event {
   serialNumber: string;
@@ -361,15 +362,22 @@ export default function AddPatientForm() {
                     } else {
                       toast.error("Upload failed.");
                     }
-                  } catch (err) {
-                    toast.error("Upload error");
+                  } catch (err: unknown) {
+                    if (err instanceof Error) {
+                      toast.error("Upload error" + err.message);
+                    } else {
+                      toast.error("Upload error");
+                    }
+                    
                   }
                 }}
                 className="border p-2 rounded"
               />
 
               {formData.photoUrl && (
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   src={formData.photoUrl}
                   alt="Uploaded"
                   className="w-24 h-24 object-cover rounded border mt-2"
@@ -451,7 +459,9 @@ export default function AddPatientForm() {
             <div className="flex flex-wrap gap-2 mt-2">
               {formData.relatedImages.map((url, index) => (
                 <div key={index} className="relative w-20 h-20">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src={url}
                     alt={`Image ${index}`}
                     className="w-full h-full object-cover rounded"
