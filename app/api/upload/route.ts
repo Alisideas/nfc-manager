@@ -5,7 +5,7 @@ import fs from "fs";
 import { promisify } from "util";
 
 // Enable reading multipart form
-export const config = {
+export const routeSegmentConfig = {
   api: {
     bodyParser: false,
   },
