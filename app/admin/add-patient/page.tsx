@@ -336,15 +336,46 @@ export default function AddPatientForm() {
               </button>
             </div>
 
-            <input
-              type="text"
-              placeholder="Photo URL"
-              value={formData.photoUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, photoUrl: e.target.value })
-              }
-              className="p-2 border rounded"
-            />
+            <div className="flex flex-col gap-2">
+              <label className="font-medium">Patient Photo</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+
+                  const formDataFile = new FormData();
+                  formDataFile.append("file", file);
+
+                  try {
+                    const res = await fetch("/api/upload", {
+                      method: "POST",
+                      body: formDataFile,
+                    });
+
+                    const data = await res.json();
+                    if (res.ok && data.url) {
+                      setFormData((prev) => ({ ...prev, photoUrl: data.url }));
+                      toast.success("Photo uploaded to Cloudinary!");
+                    } else {
+                      toast.error("Upload failed.");
+                    }
+                  } catch (err) {
+                    toast.error("Upload error");
+                  }
+                }}
+                className="border p-2 rounded"
+              />
+
+              {formData.photoUrl && (
+                <img
+                  src={formData.photoUrl}
+                  alt="Uploaded"
+                  className="w-24 h-24 object-cover rounded border mt-2"
+                />
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mt-4">
@@ -378,45 +409,68 @@ export default function AddPatientForm() {
           </div>
 
           <div className="mt-4">
-            <label className="block font-medium mb-1">Related Image URLs</label>
-            {formData.relatedImages.map((url, index) => (
-              <div key={index} className="flex items-center gap-2 mb-2">
-                <input
-                  type="text"
-                  value={url}
-                  onChange={(e) => {
-                    const updated = [...formData.relatedImages];
-                    updated[index] = e.target.value;
-                    setFormData({ ...formData, relatedImages: updated });
-                  }}
-                  className="flex-1 p-2 border rounded"
-                />
-                <button
-                  type="button"
-                  className="text-red-500"
-                  onClick={() => {
-                    const updated = formData.relatedImages.filter(
-                      (_, i) => i !== index
-                    );
-                    setFormData({ ...formData, relatedImages: updated });
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              className="text-blue-500 mt-1"
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  relatedImages: [...formData.relatedImages, ""],
-                })
-              }
-            >
-              + Add Image URL
-            </button>
+            <label className="block font-medium mb-1">Related Images</label>
+
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={async (e) => {
+                const files = e.target.files;
+                if (!files || files.length === 0) return;
+
+                const uploadedUrls: string[] = [];
+
+                for (const file of Array.from(files)) {
+                  const formData = new FormData();
+                  formData.append("file", file);
+
+                  const res = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                  });
+
+                  const data = await res.json();
+                  if (res.ok && data.url) {
+                    uploadedUrls.push(data.url);
+                  } else {
+                    toast.error("One or more images failed to upload.");
+                  }
+                }
+
+                setFormData((prev) => ({
+                  ...prev,
+                  relatedImages: [...prev.relatedImages, ...uploadedUrls],
+                }));
+                toast.success("Images uploaded!");
+              }}
+              className="border p-2 rounded"
+            />
+
+            {/* Preview thumbnails */}
+            <div className="flex flex-wrap gap-2 mt-2">
+              {formData.relatedImages.map((url, index) => (
+                <div key={index} className="relative w-20 h-20">
+                  <img
+                    src={url}
+                    alt={`Image ${index}`}
+                    className="w-full h-full object-cover rounded"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = formData.relatedImages.filter(
+                        (_, i) => i !== index
+                      );
+                      setFormData({ ...formData, relatedImages: updated });
+                    }}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div>

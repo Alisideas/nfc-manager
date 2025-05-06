@@ -82,7 +82,7 @@ export default function PatientsPage() {
                       </span>
                       {new Date(patient.nextAppointment).getTime() -
                         Date.now() <
-                        7 * 24 * 60 * 60 * 1000 && (
+                        2 * 24 * 60 * 60 * 1000 && (
                         <span className="mt-1 inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full">
                           Soon 🚨
                         </span>

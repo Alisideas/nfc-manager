@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
   images: {
     domains: [
       "images.unsplash.com",
@@ -14,10 +15,17 @@ const nextConfig = {
       "i.pinimg.com",
       "www.themoviedb.org",
       "upload.wikimedia.org",
-      'images.remotePatterns',
-      'm.media-amazon.com',
-      'www.shareicon.net',
+      "images.remotePatterns",
+      "m.media-amazon.com",
+      "www.shareicon.net",
+      "images.pexels.com",
+      "blog.imglarger.com",
+      "guides.wp-bullet.com",
+      'res.cloudinary.com',
     ],
+  },
+  experimental: {
+    serverActions: true,
   },
 };
 
