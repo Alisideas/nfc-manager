@@ -29,7 +29,7 @@ export default async function Home() {
 
       {/* Upcoming Appointments */}
       <div className="mb-10">
-        <div className="border rounded p-4 bg-gray-50">
+        <div className="border rounded p-4 bg-gray-50 bg-opacity-50">
           <h2 className="text-xl font-semibold mb-4">
             📅 Upcoming Appointments
           </h2>

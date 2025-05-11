@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma"; // assuming you have a prisma instance
 
 // GET Patient
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const { id } = params;
 
   const patient = await prisma.patient.findUnique({
@@ -20,7 +23,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // UPDATE Patient
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const { id } = params;
   const data = await req.json();
 
@@ -33,15 +39,22 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // DELETE Patient
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const { id } = params;
 
   try {
+    
     // First delete all related appointments
     await prisma.appointment.deleteMany({
       where: { patientId: id },
     });
 
+    await prisma.comment.deleteMany({
+      where: { patientId: id },
+    });
     // Then delete the patient
     await prisma.patient.delete({
       where: { id },
@@ -53,4 +66,3 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     return new Response("Error deleting patient", { status: 500 });
   }
 }
-

@@ -1,4 +1,3 @@
-// updated PatientDetailPage with relatedImages thumbnail and carousel
 "use client";
 
 import { useEffect, useState, useRef } from "react";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { BsThreeDots, BsPencil } from "react-icons/bs";
 import Image from "next/image";
 import html2pdf from "html2pdf.js";
+import QRCode from "qrcode";
 
 interface Appointment {
   id: string;
@@ -35,6 +35,7 @@ export default function PatientDetailPage() {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [showCarousel, setShowCarousel] = useState(false);
   const [editingField, setEditingField] = useState<string | null>(null);
+  const [qrUrl, setQrUrl] = useState<string>("");
 
   const [form, setForm] = useState({
     firstName: "",
@@ -136,6 +137,9 @@ export default function PatientDetailPage() {
         relatedImages: data.relatedImages || [],
         illness: data.illness || "",
       });
+      const profileUrl = `${window.location.origin}/admin/patients/${data.id}`;
+      const qr = await QRCode.toDataURL(profileUrl);
+      setQrUrl(qr);
       setLoading(false);
     }
     fetchPatient();
@@ -189,8 +193,8 @@ export default function PatientDetailPage() {
             [key]: type === "number" ? +e.target.value : e.target.value,
           })
         }
-        className={`border p-2 rounded w-full ${
-          editingField === key ? "bg-white" : "bg-gray-100"
+        className={`border p-2 rounded w-full focus:outline-none focus:ring ${
+          editingField === key ? "bg-white text-black" : "bg-gray-100 bg-opacity-50"
         }`}
       />
       <BsPencil
@@ -203,8 +207,7 @@ export default function PatientDetailPage() {
   if (loading) return <div className="p-8">Loading...</div>;
 
   return (
-    <div className="p-8 max-w-3xl mx-auto" id="print-section"
-    ref={printRef}>
+    <div className="p-8 max-w-3xl mx-auto" id="print-section" ref={printRef}>
       <Link
         className="flex items-center mb-6 cursor-pointer hover:text-blue-500"
         href="/"
@@ -213,10 +216,7 @@ export default function PatientDetailPage() {
         👈 <span className="ml-2">Back</span>
       </Link>
 
-      <div
-        className="flex flex-row justify-between items-center gap-4 mb-4 relative"
-        
-      >
+      <div className="flex flex-row justify-between items-center gap-4 mb-4 relative">
         <h1 className="text-2xl font-bold">Patient Details</h1>
         <div className="relative" ref={dropdownRef}>
           <BsThreeDots
@@ -224,13 +224,13 @@ export default function PatientDetailPage() {
             onClick={() => setDropdownOpen((prev) => !prev)}
           />
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-md z-50">
+            <div className="absolute right-0 mt-2 w-48 bg-white bg-opacity-50 border rounded shadow-md z-50">
               <button
                 onClick={() => {
                   setConfirmDialogOpen(true);
                   setDropdownOpen(false);
                 }}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-black"
               >
                 Delete Patient
               </button>
@@ -245,7 +245,7 @@ export default function PatientDetailPage() {
                   }
                   setDropdownOpen(false);
                 }}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-black"
               >
                 Edit Appointment
               </button>
@@ -254,7 +254,7 @@ export default function PatientDetailPage() {
                   handlePrint();
                   setDropdownOpen(false);
                 }}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-black"
               >
                 🖨️ Print Profile
               </button>
@@ -540,6 +540,15 @@ export default function PatientDetailPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {qrUrl && (
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600">
+            Scan this QR code to open profile:
+          </p>
+          <img src={qrUrl} alt="QR Code" className="w-32 h-32 mx-auto mt-2" />
+          <p className="text-xs text-gray-500 break-words mt-2">{`${window.location.origin}/admin/patients/${patient?.id}`}</p>
         </div>
       )}
     </div>
