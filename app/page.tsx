@@ -96,7 +96,7 @@ export default function Home() {
         <Card>
           <CardContent className="p-4">
             <div className="text-3xl font-semibold">{todayAppointments}</div>
-            <div className="text-gray-500">Today's Appointments</div>
+            <div className="text-gray-500">Today&apos;s Appointments</div>
           </CardContent>
         </Card>
         <Card>
