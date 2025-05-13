@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   try {
     const res = await new Promise<{ secure_url: string }>((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream({ folder: "patients" }, (err: unknown, result: any) => {
+        .upload_stream({ folder: "patients" }, (err: unknown, result: any | undefined) => {
           if (err || !result) return reject(err);
           resolve(result);
         })
