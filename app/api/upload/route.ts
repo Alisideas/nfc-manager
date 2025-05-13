@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 // Enable reading multipart form
 export const routeSegmentConfig = {
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   try {
     const res = await new Promise<{ secure_url: string }>((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream({ folder: "patients" }, (err: any, result: any) => {
+        .upload_stream({ folder: "patients" }, (err: unknown, result: { secure_url: string } | undefined) => {
           if (err || !result) return reject(err);
           resolve(result);
         })

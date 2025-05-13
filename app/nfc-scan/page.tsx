@@ -5,6 +5,29 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
+interface NDEFReadingEvent extends Event {
+  serialNumber: string;
+  message: { records: NDEFRecord[] };
+}
+// Define the NDEFRecord interface
+interface NDEFRecord {
+  recordType: string;
+  mediaType: string;
+  id: string;
+  data: string;
+}
+
+declare global {
+  interface Window {
+    NDEFReader?: {
+      new (): {
+        scan: () => Promise<void>;
+        onreading: (event: NDEFReadingEvent) => void;
+      };
+    };
+  }
+}
+
 export default function NFCScanPage() {
   const router = useRouter();
   const [nfcId, setNfcId] = useState("");
@@ -29,11 +52,11 @@ export default function NFCScanPage() {
     }
 
     try {
-      const ndef = new (window as any).NDEFReader();
+      const ndef = new window.NDEFReader!();
       await ndef.scan();
       toast("Hold the NFC card near the device...");
 
-      ndef.onreading = async (event: any) => {
+      ndef.onreading = async (event) => {
         const tagId = event.serialNumber;
         if (!tagId) {
           toast.error("No NFC ID found.");
