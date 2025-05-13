@@ -7,7 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  username   String   @unique
+  password   String   // Hashed
+  secretCode String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+
+  patients   Patient[]
+}
+
+
+
 model Patient {
+  userId                    String        @db.ObjectId
+  user                      User          @relation(fields: [userId], references: [id])
   id                        String        @id @default(auto()) @map("_id") @db.ObjectId
   firstName                 String
   lastName                  String
