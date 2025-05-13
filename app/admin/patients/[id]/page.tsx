@@ -194,7 +194,9 @@ export default function PatientDetailPage() {
           })
         }
         className={`border p-2 rounded w-full focus:outline-none focus:ring ${
-          editingField === key ? "bg-white text-black" : "bg-gray-100 bg-opacity-50"
+          editingField === key
+            ? "bg-white text-black"
+            : "bg-gray-100 bg-opacity-50"
         }`}
       />
       <BsPencil
@@ -204,7 +206,12 @@ export default function PatientDetailPage() {
     </div>
   );
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading)
+    return (
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
 
   return (
     <div className="p-8 max-w-3xl mx-auto" id="print-section" ref={printRef}>
@@ -225,6 +232,12 @@ export default function PatientDetailPage() {
           />
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white bg-opacity-50 border rounded shadow-md z-50">
+              <Link
+                href={`/admin/patients/${id}/payments`}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-black"
+              >
+                Payment History
+              </Link>
               <button
                 onClick={() => {
                   setConfirmDialogOpen(true);

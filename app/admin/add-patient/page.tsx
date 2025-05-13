@@ -142,7 +142,7 @@ export default function AddPatientForm() {
 
   return (
     <div>
-      <div className="max-w-xl mx-auto p-4 bg-white shadow-md rounded mt-8">
+      <div className="max-w-xl mx-auto p-4 shadow-md rounded mt-8">
         <Link
           className="flex items-center mb-6 cursor-pointer hover:text-blue-500 w-10 h-10"
           href={"/"}
@@ -161,7 +161,7 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, firstName: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <input
               type="text"
@@ -170,7 +170,7 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, lastName: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <input
               type="text"
@@ -179,7 +179,7 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, idNumber: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <input
               type="text"
@@ -188,14 +188,14 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, trackingId: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <select
               value={formData.gender}
               onChange={(e) =>
                 setFormData({ ...formData, gender: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
@@ -209,14 +209,14 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, age: +e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <select
               value={formData.medicalHistory}
               onChange={(e) =>
                 setFormData({ ...formData, medicalHistory: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             >
               <option value="">Select Medical History</option>
               <option value="yes">Yes</option>
@@ -229,14 +229,14 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, specificDesase: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <select
               value={formData.insuranceType}
               onChange={(e) =>
                 setFormData({ ...formData, insuranceType: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             >
               <option value="">Select Insurance Type</option>
               <option value="private">Khadamat darmani</option>
@@ -250,7 +250,7 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, referredDoctor: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <input
               type="text"
@@ -259,7 +259,7 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, bodyPartAffected: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <input
               type="number"
@@ -271,17 +271,20 @@ export default function AddPatientForm() {
                   NumberOfBodyPartsAffected: +e.target.value,
                 })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
-            <input
-              type="text"
-              placeholder="Visiting Type"
+            <select
               value={formData.visitingType}
               onChange={(e) =>
                 setFormData({ ...formData, visitingType: e.target.value })
               }
-              className="p-2 border rounded"
-            />
+              className="p-2 border rounded text-black"
+            >
+              <option value="">Select Visiting Type</option>
+              <option value="in-person">Face-to-Face</option>
+              <option value="online">Online</option>
+              <option value="phone">Phone</option>
+            </select>
             <input
               type="text"
               placeholder="Address"
@@ -289,7 +292,7 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, address: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <input
               type="text"
@@ -298,7 +301,7 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, phoneNumber: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <input
               type="email"
@@ -307,7 +310,7 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <input
               type="text"
@@ -316,7 +319,7 @@ export default function AddPatientForm() {
               onChange={(e) =>
                 setFormData({ ...formData, illness: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 border rounded text-black"
             />
             <div className="flex gap-2 items-center">
               <input
@@ -368,7 +371,6 @@ export default function AddPatientForm() {
                     } else {
                       toast.error("Upload error");
                     }
-                    
                   }
                 }}
                 className="border p-2 rounded"
@@ -399,7 +401,7 @@ export default function AddPatientForm() {
                     currentAppointment: e.target.value,
                   })
                 }
-                className="p-2 border rounded"
+                className="p-2 border rounded text-black"
               />
             </div>
             <div>
@@ -411,7 +413,7 @@ export default function AddPatientForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, nextAppointment: e.target.value })
                 }
-                className="p-2 border rounded"
+                className="p-2 border rounded text-black"
               />
             </div>
           </div>

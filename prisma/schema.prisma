@@ -35,6 +35,7 @@ model Patient {
   updatedAt                 DateTime      @updatedAt
   history                   Appointment[]
   comments                  Comment[]
+  payments                  Payment[]
 }
 
 model Appointment {
@@ -53,4 +54,15 @@ model Comment {
   createdAt DateTime @default(now())
   patient   Patient  @relation(fields: [patientId], references: [id])
   patientId String   @db.ObjectId
+}
+
+model Payment {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  patientId   String   @db.ObjectId
+  amount      Float
+  method      String
+  description String
+  status      String
+  date        DateTime @default(now())
 }
