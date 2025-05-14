@@ -7,7 +7,7 @@ import { Users, ScanLine, DollarSign, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { RecentPatients } from "@/components/recentPatients";
 import { SafeUser } from "@/types";
-import { Button } from "./ui/button";
+
 import { signOut } from "next-auth/react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 
@@ -17,7 +17,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import toast from "react-hot-toast";
 
 interface HomeClientProps {

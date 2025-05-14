@@ -10,7 +10,6 @@ import { useState } from "react";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
   CardDescription,
@@ -21,11 +20,10 @@ const RegisterClient = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
   } = useForm();
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit: SubmitHandler<Record<string, any>> = (data: any) => {
+  const onSubmit: SubmitHandler<Record<string, string>> = (data: Record<string, string>) => {
     setIsLoading(true);
 
     axios
