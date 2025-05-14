@@ -8,18 +8,18 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  username   String   @unique
-  password   String   // Hashed
-  secretCode String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  username          String   @unique
+  email             String   @unique
+  hashedPassword    String?
+  emailVerified     Boolean? @default(false) // Ensure this defaults to false
+  verificationToken String?
+  secretCode        String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-
-  patients   Patient[]
+  patients Patient[]
 }
-
-
 
 model Patient {
   userId                    String        @db.ObjectId
