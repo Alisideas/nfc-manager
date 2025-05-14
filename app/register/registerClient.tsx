@@ -50,9 +50,9 @@ const RegisterClient = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
             <Card>
               <CardHeader>
-                <CardTitle>Vendor Information</CardTitle>
+                <CardTitle>User Information</CardTitle>
                 <CardDescription>
-                  Enter your details to become a Vendor.
+                  Enter your details to become a user.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">

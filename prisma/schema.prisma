@@ -18,7 +18,20 @@ model User {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  patients Patient[]
+  patients      Patient[]
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  plan      String
+  startDate DateTime
+  endDate   DateTime
+  status    String // "active", "inactive"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Patient {

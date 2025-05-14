@@ -1,7 +1,13 @@
 import prisma from "@/lib/prisma";
+import getCurrentUser from "@/app/actions/getCurrentUser"; // this should return the logged-in user
 
 export async function POST(req: Request) {
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
     const body = await req.json();
 
     const {
@@ -29,9 +35,10 @@ export async function POST(req: Request) {
       nextAppointment,
     } = body;
 
-    // Create patient
+    // ✅ Include userId
     const patient = await prisma.patient.create({
       data: {
+        userId: currentUser.id,
         firstName,
         lastName,
         photoUrl,
@@ -57,7 +64,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // Optionally create initial appointment from nextAppointment
+    // Optionally create initial appointment
     if (nextAppointment) {
       await prisma.appointment.create({
         data: {

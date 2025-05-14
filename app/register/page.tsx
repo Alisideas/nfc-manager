@@ -13,7 +13,7 @@ const Register = () => {
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground bg-green-600">
               <ShoppingBag className="size-4 cursor-pointer"/>
             </div>
-            Buyco.
+            NFC Manager.
           </a>
           <RegisterClient />
         </div>

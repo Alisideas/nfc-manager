@@ -13,5 +13,5 @@ export default async function HomePage() {
     return <Login />;
   }
 
-  return <HomeClient />;
+  return <HomeClient  currentUser={currentUser}/>;
 }

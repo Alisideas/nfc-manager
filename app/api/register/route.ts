@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import prisma from "@/lib/prisma";
-// import { sendVerificationEmail } from "@/app/libs/email";
 import crypto from "crypto";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, username, password, getsecretCode } = body;
+    const { email, username, password } = body;
 
-    // Check if the email is already registered
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -21,13 +19,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Extract IP address
-
-    // Hash password and generate verification token
     const hashedPassword = await bcrypt.hash(password, 12);
     const secretCode = crypto.randomBytes(16).toString("hex");
 
-    // Create user in database
     const user = await prisma.user.create({
       data: {
         email,
@@ -37,14 +31,28 @@ export async function POST(request: Request) {
       },
     });
 
+    // Automatically assign 1-month subscription
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + 1);
+
+    await prisma.subscription.create({
+      data: {
+        userId: user.id,
+        plan: "basic",
+        startDate,
+        endDate,
+        status: "active",
+      },
+    });
 
     return NextResponse.json({
-      message: "User created successfully. Please check your email to verify your account.",
+      message: "User created and subscribed for 1 month successfully.",
     });
   } catch (error) {
     console.error("Error during registration:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred. Please try again." },
+      { error: "An unexpected error occurred." },
       { status: 500 }
     );
   }

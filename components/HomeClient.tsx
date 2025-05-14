@@ -6,11 +6,35 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Users, ScanLine, DollarSign, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { RecentPatients } from "@/components/recentPatients";
+import { SafeUser } from "@/types";
+import { Button } from "./ui/button";
+import { signOut } from "next-auth/react";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 
-export default function HomeClient() {
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import toast from "react-hot-toast";
+
+interface HomeClientProps {
+  currentUser: SafeUser | null;
+}
+
+const HomeClient: React.FC<HomeClientProps> = ({ currentUser }) => {
   const [patientCount, setPatientCount] = useState<number>(0);
   const [todayAppointments, setTodayAppointments] = useState<number>(0);
+  const [subscriptionEnd, setSubscriptionEnd] = useState<Date | null>(null);
 
+  const daysLeft = subscriptionEnd
+    ? Math.ceil(
+        (subscriptionEnd.getTime() - new Date().getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
+    : 0;
   useEffect(() => {
     fetch("/api/admin/patients/count")
       .then((res) => res.json())
@@ -19,26 +43,78 @@ export default function HomeClient() {
     fetch("/api/admin/appointments/today")
       .then((res) => res.json())
       .then((data) => setTodayAppointments(data.count));
+
+    fetch("/api/subscription")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.subscription?.endDate) {
+          setSubscriptionEnd(new Date(data.subscription.endDate));
+        }
+      });
   }, []);
 
   return (
     <main className="p-6 max-w-6xl mx-auto">
-      <div className="relative bg-blue-50 rounded-xl p-8 overflow-hidden shadow mb-8">
-        <div className="relative z-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Welcome to the Patient Management Dashboard
-          </h1>
-          <p className="mt-2 text-gray-700 text-lg">
-            Easily track patients, appointments, payments, and NFC-tag profiles
-            — all in one place.
-          </p>
-          <div className="mt-4">
-            <a
-              // href="/admin/add-patient"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
-            >
-              Your subscription ends in 3 days 🎉
-            </a>
+      <div className="relative bg-blue-50 rounded-xl p-8 overflow-hidden shadow mb-8 relative z-5">
+        <div className="flex flex-row items-center justify-between">
+          <div>
+            <div className="relative z-10">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                Welcome back {currentUser?.username} 👋
+              </h1>
+              <p className="mt-2 text-gray-700 text-xl">
+                Manage your patients and appointments with ease.
+              </p>
+              <p className="mt-2 text-gray-700 text-xs">
+                Easily track patients, appointments, payments, and NFC-tag
+                profiles — all in one place.
+              </p>
+              <div className="mt-4">
+                {subscriptionEnd ? (
+                  <span className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                    Your subscription ends on{" "}
+                    <span className="underline font-bold">{daysLeft}</span>
+                    <span> Days 🎉</span>
+                  </span>
+                ) : (
+                  <span className="inline-block bg-red-500 text-white py-2 px-4 rounded">
+                    No subscription found
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="z-10 flex absolute top-4 right-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="relative z-20 p-2 cursor-pointer">
+                  <HiOutlineDotsVertical className="text-2xl" />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem disabled>
+                  {currentUser?.email}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (currentUser?.secretCode) {
+                      navigator.clipboard.writeText(currentUser.secretCode);
+                      toast.success("Secret code copied to clipboard!");
+                    }
+                  }}
+                  className="cursor-pointer"
+                >
+                  Copy Secret Code !
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => signOut()}
+                  className="cursor-pointer bg-red-700 text-white"
+                >
+                  Sign out
+                </DropdownMenuItem>
+                
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -109,4 +185,6 @@ export default function HomeClient() {
       </section>
     </main>
   );
-}
+};
+
+export default HomeClient;

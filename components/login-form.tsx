@@ -23,11 +23,12 @@ export function LoginForm({
   const { register, handleSubmit } = useForm<{
     email: string;
     password: string;
+    secretCode: string;
   }>();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = async (data: { email: string; password: string }) => {
+  const onSubmit = async (data: { email: string; password: string; secretCode: string; }) => {
     setIsLoading(true);
 
     const response = await signIn("credentials", {
@@ -89,6 +90,15 @@ export function LoginForm({
                   <Input
                     {...register("email", { required: true })}
                     id="email"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="secretCode">secret code</Label>
+                  <Input
+                    {...register("secretCode", { required: true })}
+                    id="secretCode"
+                    type="text"
+                    placeholder="Enter your secret code"
                   />
                 </div>
                 <div className="grid gap-2">

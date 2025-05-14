@@ -22,6 +22,7 @@ const nextConfig = {
       "blog.imglarger.com",
       "guides.wp-bullet.com",
       'res.cloudinary.com',
+      'images.remotePatterns',
     ],
   },
   experimental: {
