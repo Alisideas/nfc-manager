@@ -19,7 +19,6 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-
   const { register, handleSubmit } = useForm<{
     email: string;
     password: string;
@@ -28,7 +27,11 @@ export function LoginForm({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = async (data: { email: string; password: string; secretCode: string; }) => {
+  const onSubmit = async (data: {
+    email: string;
+    password: string;
+    secretCode: string;
+  }) => {
     setIsLoading(true);
 
     const response = await signIn("credentials", {
@@ -36,7 +39,6 @@ export function LoginForm({
       redirect: false,
     });
 
-    isLoading;
     setIsLoading(false);
 
     if (response?.ok) {
@@ -118,8 +120,8 @@ export function LoginForm({
                     type="password"
                   />
                 </div>
-                <Button type="submit" className="w-full">
-                  Login
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </div>
               <div className="text-center text-sm">
