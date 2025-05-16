@@ -8,7 +8,7 @@ export default function AuthButtons() {
   if (session) {
     return (
       <div className="flex items-center gap-2">
-        <span>Welcome, {session.user?.name}</span>
+        <span>Welcome, {session.user?.username}</span>
         <button
           onClick={() => signOut()}
           className="px-4 py-2 bg-red-500 text-white rounded"
