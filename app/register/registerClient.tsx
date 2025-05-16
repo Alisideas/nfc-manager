@@ -20,7 +20,6 @@ const RegisterClient = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors: formErrors }, // rename unused `errors`
   } = useForm();
   const [isLoading, setIsLoading] = useState(false);
 

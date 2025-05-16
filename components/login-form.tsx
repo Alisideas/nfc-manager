@@ -36,6 +36,7 @@ export function LoginForm({
       redirect: false,
     });
 
+    isLoading;
     setIsLoading(false);
 
     if (response?.ok) {
