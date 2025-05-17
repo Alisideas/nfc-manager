@@ -1,31 +1,29 @@
 // app/api/admin/nfc-read/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
+  const body = await req.json();
+  const { nfcId } = body;
+
+  console.log("📥 NFC ID received:", nfcId);
+
+  if (!nfcId) {
+    return NextResponse.json({ error: "Missing NFC ID" }, { status: 400 });
+  }
+
   try {
-    const { nfcId } = await req.json();
-
-    if (!nfcId) {
-      return NextResponse.json({ error: 'Missing NFC ID' }, { status: 400 });
-    }
-
-    // Optional: Log or do something with the NFC ID
-    console.log("📥 NFC ID received:", nfcId);
-
-    // Find the patient with this NFC ID
     const patient = await prisma.patient.findUnique({
       where: { nfcId },
     });
 
     if (!patient) {
-      return NextResponse.json({ message: 'Patient not found' }, { status: 404 });
+      return NextResponse.json({ patient: null });
     }
 
-    // Respond with patient info
     return NextResponse.json({ patient });
-  } catch (error) {
-    console.error("❌ API error:", error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch (err) {
+    console.error("❌ Error fetching patient:", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

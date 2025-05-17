@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 interface NDEFReadingEvent extends Event {
   serialNumber: string;
@@ -32,6 +33,17 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 export default function AddPatientForm() {
+  const [isClient, setIsClient] = useState(false);
+  const [isReadingNfc, setIsReadingNfc] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const searchParams = useSearchParams(); // ✅ NEW
+  const nfcIdFromQuery = searchParams?.get("nfcId") ?? "";
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -52,69 +64,45 @@ export default function AddPatientForm() {
     email: "",
     relatedImages: [""],
     illness: "",
-    nfcId: "",
+    nfcId: nfcIdFromQuery,
     currentAppointment: "",
     nextAppointment: "",
   });
-
-  const [isClient, setIsClient] = useState(false);
-  const router = useRouter();
-
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    const tagId = searchParams.get("nfcId");
+    if (tagId) {
+      setFormData((prev) => ({ ...prev, nfcId: tagId }));
+      toast.success(`Pre-filled NFC ID from desktop: ${tagId}`);
+    }
+  }, [searchParams]);
 
   const handleReadNfcTag = async () => {
-    if (!("NDEFReader" in window)) {
-      toast.error("Web NFC is not supported in this browser.");
-      return;
-    }
-
     try {
-      const ndef = new (
-        window as unknown as {
-          NDEFReader: new () => {
-            scan: () => Promise<void>;
-            onreading: (event: NDEFReadingEvent) => void;
-          };
-        }
-      ).NDEFReader();
+      toast.loading("Waiting for NFC tag to be scanned...");
 
-      await ndef.scan();
-
-      toast("Hold NFC tag near the reader...");
-
-      ndef.onreading = (event: NDEFReadingEvent) => {
-        const tagId = event.serialNumber;
-
-        if (!tagId) {
-          toast.error("Could not read tag ID.");
-          return;
-        }
-
-        setFormData((prev) => ({ ...prev, nfcId: tagId }));
-        toast.success(`Tag read: ${tagId}`);
-
-        // Optional: check if this NFC ID is already registered
-        fetch(`/api/admin/patients/nfc/${tagId}`)
-          .then(async (res) => {
-            if (res.ok) {
-              const patient = await res.json();
-              toast(
-                `Already registered to: ${patient.firstName} ${patient.lastName}`
-              );
-            }
-          })
-          .catch(() => {
-            toast("Tag is not yet registered.");
-          });
+      const checkUid = async (): Promise<string | null> => {
+        const res = await fetch("/api/nfc/scan");
+        const data = await res.json();
+        return data.uid;
       };
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error("NFC read failed: " + error.message);
-      } else {
-        toast.error("NFC read failed");
+
+      let retries = 20;
+      let uid = null;
+
+      while (retries-- > 0) {
+        uid = await checkUid();
+        if (uid) break;
+        await new Promise((r) => setTimeout(r, 1000)); // wait 1 second
       }
+
+      if (uid) {
+        setFormData((prev) => ({ ...prev, nfcId: uid }));
+        toast.success(`Tag read: ${uid}`);
+      } else {
+        toast.error("No tag detected. Please try again.");
+      }
+    } catch (err: unknown) {
+      toast.error("Failed to read NFC tag.");
     }
   };
 
@@ -334,9 +322,40 @@ export default function AddPatientForm() {
               <button
                 type="button"
                 onClick={handleReadNfcTag}
-                className="bg-blue-500 text-white px-3 rounded hover:bg-blue-600"
+                disabled={isReadingNfc}
+                className={`flex items-center justify-center gap-2 px-3 py-2 rounded text-white transition-colors duration-300 ${
+                  isReadingNfc
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600"
+                }`}
               >
-                Read NFC
+                {isReadingNfc ? (
+                  <>
+                    <svg
+                      className="animate-spin h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8z"
+                      ></path>
+                    </svg>
+                    Reading...
+                  </>
+                ) : (
+                  "Read NFC"
+                )}
               </button>
             </div>
 
