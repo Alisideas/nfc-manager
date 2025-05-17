@@ -34,7 +34,7 @@ import toast from "react-hot-toast";
 
 export default function AddPatientForm() {
   const [isClient, setIsClient] = useState(false);
-  const [isReadingNfc, setIsReadingNfc] = useState(false);
+  const [isReadingNfc] = useState(false);
 
   const router = useRouter();
 
@@ -101,7 +101,7 @@ export default function AddPatientForm() {
       } else {
         toast.error("No tag detected. Please try again.");
       }
-    } catch (err: unknown) {
+    } catch {
       toast.error("Failed to read NFC tag.");
     }
   };
