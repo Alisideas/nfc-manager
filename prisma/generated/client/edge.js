@@ -218,11 +218,12 @@ const config = {
     "db"
   ],
   "activeProvider": "mongodb",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "mongodb+srv://nfcpatients:Alirezaakbari18@cluster0.tb3jpfz.mongodb.net/nfcpatients"
+        "value": null
       }
     }
   },
