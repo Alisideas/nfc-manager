@@ -54,6 +54,58 @@ const HomeClient: React.FC<HomeClientProps> = ({ currentUser }) => {
 
   return (
     <main className="p-6 max-w-6xl mx-auto">
+      {currentUser?.hasDesktopApp ? null : (
+  <div className="bg-yellow-100 border border-yellow-300 p-4 rounded mb-6 flex justify-between items-center">
+    <div>
+      <p className="text-sm text-yellow-800 font-medium">
+        You haven’t installed the desktop app yet.
+      </p>
+      <p className="text-xs text-yellow-700">
+        Click below to receive a download link or mark the app as installed.
+      </p>
+    </div>
+    <div className="flex gap-2">
+      <button
+        onClick={async () => {
+          const res = await fetch("/api/send-desktop-link", {
+            method: "POST",
+            body: JSON.stringify({ email: currentUser?.email }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (res.ok) {
+            toast.success("Download link sent to your email.");
+          } else {
+            toast.error("Failed to send email.");
+          }
+        }}
+        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
+      >
+        Send Link
+      </button>
+      <button
+        onClick={async () => {
+          const res = await fetch("/api/user/set-desktop-app", {
+            method: "POST",
+          });
+
+          if (res.ok) {
+            toast.success("Marked as installed. Please refresh.");
+          } else {
+            toast.error("Failed to update user.");
+          }
+        }}
+        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
+      >
+        Mark as Installed
+      </button>
+    </div>
+  </div>
+)}
+
+
       <div className="relative bg-blue-50 rounded-xl p-8 overflow-hidden shadow mb-8 relative z-5">
         <div className="flex flex-row items-center justify-between">
           <div>
@@ -111,7 +163,6 @@ const HomeClient: React.FC<HomeClientProps> = ({ currentUser }) => {
                 >
                   Sign out
                 </DropdownMenuItem>
-                
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

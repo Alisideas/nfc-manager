@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 interface Subscription {
   id: string;
@@ -30,24 +39,60 @@ export default function PaymentsClient() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-4">
-      <h1 className="text-2xl font-semibold mb-4">Your Subscriptions</h1>
+    <div className="max-w-5xl mx-auto mt-10 p-6">
+      <Link
+        className="flex items-center mb-6 cursor-pointer hover:text-blue-500"
+        href="/"
+        prefetch={false}
+      >
+        👈 <span className="ml-2">Back</span>
+      </Link>
+      <h1 className="text-3xl font-semibold mb-6 text-center">
+        Your Subscriptions
+      </h1>
 
       {loading ? (
-        <p>Loading...</p>
-      ) : subscriptions.length === 0 ? (
-        <p>No subscriptions found.</p>
-      ) : (
         <div className="grid gap-4">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-[120px] w-full rounded-md" />
+          ))}
+        </div>
+      ) : subscriptions.length === 0 ? (
+        <div className="text-center text-muted-foreground mt-8">
+          You don’t have any active subscriptions.
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-6">
           {subscriptions.map((sub) => (
-            <Card key={sub.id}>
+            <Card key={sub.id} className="shadow-md border">
               <CardHeader>
-                <CardTitle>{sub.plan}</CardTitle>
+                <CardTitle className="text-xl">
+                  {sub.plan.toUpperCase()}
+                </CardTitle>
+                <CardDescription>
+                  Subscription started on{" "}
+                  {new Date(sub.startDate).toLocaleDateString()}
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <p>Status: <span className="font-medium">{sub.status}</span></p>
-                <p>Start: {new Date(sub.startDate).toLocaleDateString()}</p>
-                <p>End: {new Date(sub.endDate).toLocaleDateString()}</p>
+              <CardContent className="space-y-2 text-sm text-muted-foreground">
+                <p>
+                  <span className="text-black ">Status: </span>
+                  <Badge
+                    variant={
+                      sub.status === "active" ? "default" : "destructive"
+                    }
+                  >
+                    {sub.status.toUpperCase()}
+                  </Badge>
+                </p>
+                <p>
+                  <span className="text-black">Start Date: </span>
+                  {new Date(sub.startDate).toLocaleDateString()}
+                </p>
+                <p>
+                  <span className="text-black">End Date: </span>
+                  {new Date(sub.endDate).toLocaleDateString()}
+                </p>
               </CardContent>
             </Card>
           ))}
